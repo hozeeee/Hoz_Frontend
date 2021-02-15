@@ -1,0 +1,16 @@
+{
+  "name": "less_demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "less": "./node_modules/.bin/lessc index.less",
+    "less-render": "node lessRender.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "less": "^3.10.3"
+  }
+}

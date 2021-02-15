@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>less_demo</title>
+
+  <!-- 通过 link 引入样式文件 -->
+  <link rel="stylesheet/less" type="text/css" href="foo.less" />
+</head>
+
+<body>
+
+  <div id="app">
+    <div class="box">hello less</div>
+  </div>
+</body>
+<!-- Less 的配置 -->
+<script>
+  less = {
+    env: "development",
+    async: false,
+    fileAsync: false,
+    poll: 1000,
+    functions: {},
+    dumpLineNumbers: "comments",
+    relativeUrls: false,
+    rootpath: ":/a.com/"
+  };
+</script>
+<!-- 引入脚本文件 -->
+<script src="less.min.js"></script>
+
+</html>
