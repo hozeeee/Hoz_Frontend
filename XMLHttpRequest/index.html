@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    body,
+    html {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      display: flex;
+    }
+
+    article {
+      flex: 1;
+      height: 100%;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+    }
+
+    article:not(:first-child) {
+      border-left: 1px solid red;
+    }
+
+    article button {
+      height: 40px;
+    }
+  </style>
+</head>
+
+<body>
+  <article>
+    <button onclick="xhrGetImage()">XMLHttpRequest 获取图片</button>
+    <div id="img-container"></div>
+  </article>
+
+  <article>
+    <button onclick="xhrGetJson()">XMLHttpRequest 获取JSON数据</button>
+    <div id="json-container"></div>
+  </article>
+
+  <article>
+    <button onclick="sendFormData()">XMLHttpRequest 发送自定义表单</button>
+    <form id="my-form">
+      <!-- （注意，input的name属性是必须的） -->
+      <label>input1: <input type="text" name="input1"></label><br>
+      <label>input1: <input type="text" name="input2"></label><br>
+      <label>input1: <input type="text" name="input3"></label><br>
+    </form>
+    <div id="form-result-container"></div>
+  </article>
+
+</body>
+<script>
+  // 获取img （包含 XMLHttpRequest 常用属性方法的介绍，及如何保存文件）
+  function xhrGetImage() {
+    /**
+     * 创建一个XMLHttpRequest实例对象
+     * ".open()" 第一个参数需要指定请求使用的 HTTP 方法，大小写不敏感
+     * ".open()" 方法的第三个参数表示 是否使用同步的方式，默认为异步。(不建议使用同步，因为会导致 ".send()" 方法被调用后阻塞后面进程)
+     */
+    let xhr = new XMLHttpRequest()
+    xhr.open('GET', './static/test.png');
+
+    // 还能重写返回数据的MIME类型，会取代服务器设定的值，若不设置则以服务器的值为准，否则为"text/xml"。（一般不设定，使用服务器提供的值即可）
+    // xhr.overrideMimeType("image/png");
+
+    // 还能设置请求头。
+    xhr.setRequestHeader("my-header", "my-value");
+
+    // 当跨域时，是否携带cookie，默认为 false 。当同源请求时，忽略此值。
+    xhr.withCredentials = true
+
+    /**
+     * 设置请求超时时间。
+     * 单位ms，值为非零整数。默认为0，表示没有超时。
+     * 注意：只能在 异步请求 中设置该值；超时后会触发 "timeout" 事件。
+     */
+    xhr.timeout = 2000;
+
+    // 设置响应类型为 blob 。值为枚举。默认为""，与"text"一致，表示数据是DOMString类型。此外还有arraybuffer、document、json。
+    xhr.responseType = 'blob'
+
+    // 监听事件
+    xhr.addEventListener('readystatechange', e => {
+      let _target = e.target
+      /**
+       * 判断状态是否为已完成
+       * .readyState 获取的是下载状态，4 表示下载完成，也就是 XMLHttpRequest.DONE 的值
+       * .status 表示响应的状态码
+       * .response 表示响应的正文内容。其数据类型可以是 ArrayBuffer、Blob、Document、JavaScript Object或DOMString，取决于responseType属性。
+       */
+      if (_target.readyState === XMLHttpRequest.DONE && _target.status === 200) {
+        // 生成照片URL
+        let blob = _target.response,
+          url = URL.createObjectURL(blob)
+        // 显示到页面上
+        let el = document.getElementById('img-container'),
+          imgEl = document.createElement('img')
+        imgEl.src = url
+        imgEl.style = 'width:100%;'
+        el.appendChild(imgEl)
+        // 下载该文件
+        let aEl = document.createElement('a'),
+          ext = blob.type.split('/')[1]
+        aEl.download = `图片.${ext}` // 指定下载名 （注意，IE不支持）
+        aEl.target = '_blank'
+        aEl.href = url
+        aEl.click()
+      }
+    })
+
+    /**
+     * 发送请求。
+     * ".send()" 方法还可以传入一个参数，作为数据传递给后台，可以传入的类型有：
+     * 1. ArrayBuffer 
+     * 2. ArrayBufferView 
+     * 3. Blob 
+     * 4. Document 
+     * 5. DOMString
+     * 6. FormData 
+     * （还有需要注意的是，发送数据时，需要在 ".setRequestHeader" 方法中设置 "Content-type"）
+     */
+    xhr.send()
+  }
+
+
+  // 获取JSON数据
+  function xhrGetJson() {
+    let xhr = new XMLHttpRequest()
+    xhr.open('get', './getjson')
+    xhr.addEventListener('readystatechange', e => {
+      let _target = e.target
+      if (_target.readyState === XMLHttpRequest.DONE && _target.status === 200) {
+        // 简单格式化数据
+        let result = '',
+          obj = JSON.parse(_target.response)
+        for (let key in obj) {
+          result += `${key}: ${JSON.stringify(obj[key])} <br>`
+        }
+        // 写到页面中
+        let containerEl = document.getElementById('json-container')
+        containerEl.style = 'word-break:break-all'  // 自动换行
+        containerEl.innerHTML = result
+      }
+    })
+    xhr.send()
+  }
+
+
+  // 发送自定义表单 （包含创建一个 FormData 表单对象）
+  function sendFormData() {
+    // 创建 FormData 对象。
+    let myForm = document.getElementById('my-form'),
+      form = new FormData(myForm)
+    // 还可以通过 "formData.append('key', 'value');" 添加到表单中。
+    form.append('newKey', 'newValue')
+
+    // xhr
+    xhr = new XMLHttpRequest()
+    xhr.open('POST', '/postform')
+    xhr.setRequestHeader('Content-Type', 'multipart/form-data')
+    xhr.addEventListener('readystatechange', e => {
+      let _target = e.target
+      if (_target.readyState === XMLHttpRequest.DONE && _target.status === 200) {
+        let containerEl = document.getElementById('form-result-container'),
+          pre = document.createElement('pre')
+        pre.innerText = _target.response
+        pre.style = 'border:1px solid blue;'
+        containerEl.appendChild(pre)
+      }
+    })
+    // 需要注意的是，上面设置的 Content-Type 不会对这里的数据格式造成影响
+    // 如果是 application/x-www-form-urlencoded (或其他类型) 需要手动拼接（或者用插件库处理）
+    xhr.send(form)
+  }
+
+</script>
+
+</html>
