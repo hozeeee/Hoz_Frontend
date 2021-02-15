@@ -1,0 +1,317 @@
+/************************ 测试解析器 ************************/
+
+// 嵌套 (等效于css的 ".parent .children {}" )
+.parent {
+    .children {
+        width: 100%;
+    }
+}
+
+.container1 {
+    // 使用变量 (变量也有作用域)
+    $myPadding: 10px;
+    $float: 3.141592653589793;
+    padding: $myPadding;
+    height: $float px;
+    width: 3.141592653589793 px; // 精度不会被"precision"属性影响
+    .sub {
+        padding: $myPadding;
+    }
+}
+
+// 引入外部 scss 文件 (也支持引入css文件)
+@import './test_import/sub.scss';
+
+// 自定义函数
+#{headings(2,5)} {
+    color: #08c;
+}
+#box1 {
+    padding: fourSidePx(1, 2, 3, 4);
+}
+
+// 测试 "includePaths" 属性
+@import 'sub4.scss';
+
+/***********************************************************/
+
+
+
+/************************ SASS 语法介绍 ************************/
+
+// 所有 CSS3 语法在 SCSS 中都是通用的
+html, body {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+
+// 嵌套规则
+.parent {
+    // 等效于 ".parent .child1"
+    .child1 {
+        width: 100%;
+    }
+    // 父选择器 "&" 。等效于 ".parent .child2"
+    &.child2 {
+        height: 100%;
+    }
+    // 父选择器的拼接。等效于 ".parent-hidden"
+    &-hidden {
+        display: none;
+    }
+}
+
+
+
+// 属性嵌套
+.box1 {
+    // 允许将属性嵌套在命名空间中。等效于 "font-size: 20px; font-weight: bold;"
+    font: {
+        size: 20px;
+        weight: bold;
+    }
+    // 命名空间也可以包含自己的属性值。等效于 "border: 1px solid #000; border-width: 2px;"
+    border: 1px solid #000 {
+        width: 2px;
+    }
+}
+
+
+
+// 变量 (定义的变量也有作用域)
+$width: 5em;
+.box2 {
+    // 等效于 "width: 5em;"
+    width: $width;
+}
+
+
+
+// 四则运算
+.box3 {
+    // 数值与带单位的数值都可以参与运算 (不兼容CSS的calc函数)
+    $width: 100px;
+    height: $width * 2;
+    padding: $width - 90px;
+    // // 颜色也可以运算 (注意,新文档不建议使用颜色运算)
+    // color: rgba(100, 99, 0, 0.75) + rgba(0, 1, 100, 0.75);  // rgba(100, 100, 100, 0.75)
+    // background-color: rgba(200, 200, 200, 0.75) / 2;    // rgba(100, 100, 100, 0.75)
+    &::before {
+        // 字符串相加拼接
+        content: "foo "+ baz; // "foo baz"
+    }
+}
+
+
+
+// 插值语句 #{}
+.box4 {
+    // 类似于JS的模板字符串
+    &::before {
+        $num: 1;
+        content: "I ate #{5 + 10 + $num} pies!"; // "I ate 16 pies!"
+    }
+    // 几乎可以作用于所有位置
+    $name: ".foo";
+    $attr: border;
+    $val: blue;
+    // 下面例子等效于 ".foo{border-color:blue;}"
+    #{$name} {
+        #{$attr}-color: #{$val};
+    }
+}
+
+
+
+// !default 语法。可用于避免变量的重复赋值，在引入外部变量时会很有用
+.box5 {
+    $width: 100px;
+    $width: 200px !default;
+    width: $width; // 100px
+    // 未赋值则可以赋值
+    $height: null;
+    $height: 200px !default;
+    height: 200px; // 200px
+}
+
+
+
+// @import 指令。用于引入外部文件，示例如下。
+// @import "rounded-corners", "text-shadow";    // 同时引入多个
+// 以下四种都不会导入文件，只会保留原来的写法。
+// @import "foo.css";
+// @import "http://foo.com/bar";
+// @import url(foo);
+// @import "foo" screen;
+// 嵌套 @import 。例子等效于 ".box6 .sub5 {background-color:blue;}"
+.box6 {
+    @import './test_import/sub5';
+}
+
+
+
+// @media 指令。与 CSS 的媒体查询用法基本一致，只是多了"方便"的功能，如，能在选择器内书写，能相互嵌套。
+// 例子编译结果如下：
+// .sidebar{width:300px;}
+// @media screen and (orientation: landscape) { .sidebar{width:500px;} }
+.sidebar {
+    width: 300px;
+
+    @media screen and (orientation: landscape) {
+        width: 500px;
+    }
+}
+
+
+
+.box7 {
+    // @extend 指令。为样式增加了"继承"功能。
+    // 例子的编译结果如下：
+    // .base, .enable { border: 1px solid #f00; }
+    // .enable { background-color: #fff; }
+    .base1 {
+        border: 1px solid #f00;
+    }
+    .base2 {
+        font-size: 20px;
+    }
+    .enable {
+        @extend .base1, .base2;
+        background-color: #fff;
+    }
+
+    // @extend 与 %(占位符) 的组合使用。(注意,当"%extreme"占位符不被使用,则整个"#context a%extreme"都被忽略)
+    // 例子的编译结果如下：
+    // #context a.notice {color:blue;font-weight:bold;font-size:2em;}
+    // .notice {background-color:red;}
+    #context a%extreme {
+        color: blue;
+        font-weight: bold;
+        font-size: 2em;
+    }
+    .notice {
+        @extend %extreme;
+        background-color: red;
+    }
+
+    // @extend 与 !optional 。当继承的对象不存在时，"!optional" 表示可以忽略继承。
+    // 例子结果为： ".test.important {background-color:blue;}"
+    .test.important {
+        background-color: blue;
+        @extend .nullClass !optional;
+    }
+
+    // @media 内不要使用 @extend 。例子：看官网7.3.8。
+}
+
+
+
+// @at-root 指令。把样式"抽离"到根路径。  @at-root (without: ...)   @at-root (with: ...)
+// 下面例子编译结果： ".box8_inside {color: red;}"  (".box8"和".inside"没内容就被忽略了)
+.box8 {
+    .inside {
+        @at-root .box8_inside {
+            color: red;
+        }
+    }
+}
+
+
+
+// @if 指令。
+// 下面例子编译结果为： ".box10 {font-size: 30px;}"
+.box10 {
+    $num10: 9;
+    @if($num10 < 5) {
+        .text {
+            font-size: 20px;
+        }
+    }
+    @else if($num10 < 10) {
+        .text {
+            font-size: 30px;
+        }
+    }
+    @else {
+        .text {
+            font-size: 40px;
+        }
+    }
+}
+
+
+
+// @for 指令。针对数值的"列表渲染"。
+// 与"to"类似的是"through"，"through"表示包含结尾的值，即列子中等效于 "@for $i from 1 through 2"。
+// <start>和<end>必须为整数。
+// 下面例子编译结果为： ".box11_1 {width:1px;} .box11_2 {width:1px;}"
+@for $i from 1 to 3 {
+    .box11_#{$i} {
+        width: 1px;
+    }
+}
+
+
+
+// @each 指令。针对枚举的"列表渲染"。
+// "in"后是一连串的值(在sass中是数组的一种表达方式)
+// 下面例子编译结果为：
+// .box12_item { background-image: url("item.png"); }
+// .box12_item { background-image: url("item.png"); }
+// .box12_item { background-image: url("item.png"); }
+@each $item in foo, baz, bar {
+    .box12_#{item} {
+        background-image: url('#{item}.png');
+    }
+}
+// 若需要同时使用多个"变量"和多个"列表"，参考下面语法。
+// @each $animal, $color, $cursor in 
+//     (puma, black, default), (sea-slug, blue, pointer), (egret, white, move) 
+// { ... }
+
+
+
+// @while 指令。
+.box13 {
+    $i: 6;
+    @while $i>0 {
+        .item-#{$i} {
+            width: 2em * $i;
+        }
+        $i: $i - 2;
+    }
+}
+
+
+
+// 混合指令。@mixin 与 @include 。(为便于书写， @mixin 可以用 = 表示，而 @include 可以用 + 表示)
+// 定义 mixin (和定义普通的样式对象一样)
+@mixin myMixin {
+    color: blue;
+    font-size: 20px;
+}
+// 使用 mixin
+.box14 {
+    @include myMixin;
+    padding: 4px;
+}
+// 相关语法：
+// 带参数的混合: @mixin($val1, $val2: <default>, ...) 对应 @include(<val1>, <val2>, ...)
+// 与JS的展开运算符(...)类似，不过是放在变量后面： @mixin($args...) ； @include($args...)
+
+
+
+// @function 指令。用于创建自定义函数。
+@function doubleLength($val) {
+    @return $val * 2;
+}
+.box15 {
+    width: doubleLength(100px);
+}
+// 自定义函数可以不定义逻辑，在"编译器"中处理。
+
+/**************************************************************/

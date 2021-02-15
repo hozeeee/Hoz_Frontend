@@ -1,0 +1,10 @@
+.container1 {
+  $myPadding: 10px;
+  $float: 3.141592653589793;
+  padding: $myPadding;
+  height: $float px;
+  width: 3.141592653589793 px;
+  .sub {
+    padding: $myPadding;
+  }
+}
