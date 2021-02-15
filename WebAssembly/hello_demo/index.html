@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hello webAssembly</title>
+</head>
+
+<body>
+  <button onclick="test()">test</button>
+</body>
+<script>
+  // 创建内存对象
+  let wasmMem = new WebAssembly.Memory({ initial: 1 })
+
+  // 定义用于打印字符串的方法
+  function print(offset, length) {
+    let bytes = new Uint8Array(wasmMem.buffer, offset, length),
+      str = new TextDecoder('utf8').decode(bytes)
+    alert(str)
+  }
+
+  // 获取 .wasm 文件并使用
+  function test() {
+    fetch('/hello.wasm').then(response => {
+      // 创建包含二进制代码(.wasm)的 ArrayBuffer
+      return response.arrayBuffer()
+    }).then(bytes => {
+      // 实例化
+      return WebAssembly.instantiate(bytes, {
+        js: {
+          print,
+          mem: wasmMem
+        }
+      })
+    }).then(result => {
+      // 调用实例的函数
+      result.instance.exports.hello()
+    })
+  }
+</script>
+
+</html>
