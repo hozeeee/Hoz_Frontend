@@ -1,0 +1,8 @@
+// 更多语法请自行查阅
+
+// 等号左边是变量名；等号右边是字段所处于 buffer 的第几位
+message Person {
+  required int32 id = 1;
+  required string name = 2;
+  required float age = 3;
+}
