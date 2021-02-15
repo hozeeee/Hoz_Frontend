@@ -1,0 +1,101 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+main {
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+
+.box {
+  border-right: 2px solid #000;
+  flex: 1 0;
+}
+
+textarea {
+  box-sizing: border-box;
+  resize: none;
+  width: 100%;
+  height: 300px;
+}
+
+header {
+  background: #080;
+  color: #fff;
+  padding: 6px 0;
+  text-align: center;
+  border-bottom: 2px solid #333;
+}
+
+.err_tips {
+  color: red;
+  font-size: 14px;
+  text-align: right;
+}
+
+/* -------- 展示区-------- */
+
+.show_and_del_box {
+  display: flex;
+  flex-direction: column;
+}
+
+.show_and_del_box>.content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* ----------------------- */
+
+/* -------- 修改区-------- */
+
+.edit_box textarea {
+  box-sizing: border-box;
+  resize: none;
+  width: 100%;
+  height: 300px;
+}
+
+/* ----------------------- */
+
+/* -------- 查询区-------- */
+
+.search_box .fit_width_input {
+  width: 90%;
+}
+
+.search_box>.grid_container {
+  display: grid;
+  grid-template: 30px / repeat(2, 1fr);
+  grid-auto-rows: 30px;
+}
+
+.search_box>.grid_container>.grid_item {
+  text-align: center;
+  border: 1px solid #aaa;
+  box-sizing: border-box;
+  padding: 0 4px;
+}
+
+.search_box>.grid_container>.grid_2_item {
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+
+/* ----------------------- */
+
+/* -------- 添加区-------- */
+
+.add_box {
+  border-right: unset;
+}
+
+/* ----------------------- */

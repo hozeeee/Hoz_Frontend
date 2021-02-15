@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
+    <title>indexedDB</title>
+</head>
+
+<body>
+    <main id="app">
+        <section class="box search_box">
+            <header>查询区</header>
+            <div class="grid_container">
+                <div class="grid_item">主键</div>
+                <div class="grid_item">查询值</div>
+                <div class="grid_item">
+                    <input class="fit_width_input" type="text" :value="usedIndex?'name':'(自增外键)'" :disabled="true">
+                </div>
+                <div class="grid_item">
+                    <input class="fit_width_input" type="text" v-model="searchValue">
+                </div>
+                <div class="grid_item grid_2_item" style="text-align:left;">
+                    <label>
+                        <input type="checkbox" v-model="usedIndex">
+                        <span style="user-select:none;">是否使用"命名索引"</span>
+                    </label>
+                </div>
+                <button class="grid_item grid_2_item" @click="search">条件查询</button>
+                <button class="grid_item grid_2_item" @click="searchAll">查询所有</button>
+            </div>
+        </section>
+        <section class="box show_and_del_box">
+            <header>展示区</header>
+            <div class="content">
+                <label v-for="(item,index) of searchResultData" :key="index">
+                    <input type="radio" v-model="checkedItem" :value="item">
+                    {{ item }}
+                </label>
+            </div>
+            <button @click="deleteItem">删除选中</button>
+        </section>
+        <section class="box edit_box">
+            <header>修改区</header>
+            <textarea v-model="editTextarea"></textarea>
+            <div class="err_tips">{{ editFormatErrTips }}</div>
+            <button @click="confirmEdit">提交修改</button>
+        </section>
+        <section class="box add_box">
+            <header>添加区</header>
+            <textarea v-model="addTextarea"></textarea>
+            <div class="err_tips">{{ addFormatErrTips }}</div>
+            <button @click="addObj">提交添加</button>
+        </section>
+    </main>
+
+</body>
+
+<!-- 引入 IndexedDB 控制器 (必须支持class语法) -->
+<script src="./dbCtrler.js"></script>
+<!-- 初始化 IndexedDB 控制器 -->
+<script>
+    window.dbController = new DbController()
+    dbController.connectDb().then(db => {
+        return dbController.getAll()
+    }).then(data => {
+        console.log('dbController.searchAll()', data)
+    })
+</script>
+
+<script>
+    new Vue({
+        el: '#app',
+        computed: {
+            checkedItem: {
+                get() {
+                    return this.checkedItem_priv
+                },
+                set(val) {
+                    this.checkedItem_priv = val
+                    this.editTextarea = JSON.stringify(val)
+                }
+            }
+        },
+        data() {
+            return {
+                // 查询数据
+                searchResultData: [],
+                // 选中值
+                checkedItem_priv: undefined,
+                // textarea 输入框数据
+                editTextarea: '',
+                addTextarea: '',
+                // 查询条件
+                searchValue: '',
+                usedIndex: false,
+                usedIndex_: false, // 针对查询结果
+                // 错误提示
+                editFormatErrTips: '',
+                addFormatErrTips: '',
+            }
+        },
+        methods: {
+            search() {
+                this.usedIndex_ = this.usedIndex
+                if (this.usedIndex_) {
+                    let outOfLineKey = this.searchValue || undefined
+                    window.dbController.getIndex('name').then(indexObj => {
+                        return new Promise((resolve, reject) => {
+                            let request = indexObj.getAll(outOfLineKey)
+                            request.onsuccess = e => {
+                                resolve(e.target.result)
+                            }
+                            request.onerror = err => {
+                                reject(err)
+                            }
+                        })
+                    }).then(data => {
+                        this.searchResultData = data
+                    }).catch(err => {
+                        console.log(err)
+                    })
+                } else {
+                    let outOfLineKey = Number.parseInt(this.searchValue || 0) || undefined
+                    window.dbController.getAll(outOfLineKey).then(data => {
+                        this.searchResultData = data
+                    }).catch(err => {
+                        console.log(err)
+                    })
+                }
+            },
+            searchAll() {
+                window.dbController.getAll().then(data => {
+                    this.searchResultData = data
+                })
+            },
+            deleteItem() {
+                if (!this.checkedItem) return alert('请先选中一项数据')
+                window.dbController.getIndex('name').then(indexObj => {
+                    return new Promise((resolve, reject) => {
+                        let request = indexObj.openCursor()
+                        request.onsuccess = e => {
+                            let cursor = e.target.result
+                            while (cursor) {
+                                if (JSON.stringify(cursor.value) === JSON.stringify(
+                                        this.checkedItem)) {
+                                    // 使用游标上的方法直接删除
+                                    cursor.delete()
+                                }
+                                cursor = cursor.continue()
+                            }
+                            resolve()
+                        }
+                        request.onerror = err => {
+                            reject(err)
+                        }
+                    })
+                }).then(data => {
+                    alert('删除成功')
+                }).catch(err => {
+                    console.log(err)
+                })
+            },
+            confirmEdit() {
+                new Promise(resolve => {
+                    let resultObj
+                    try {
+                        resultObj = JSON.parse(this.editTextarea)
+                    } catch {
+                        throw '请输入 JSON 格式的数据'
+                    }
+                    if (!Array.isArray(resultObj)) {
+                        resolve(resultObj)
+                    } else {
+                        throw '请输入单个对象的数据'
+                    }
+                }).then(data => {
+                    this.addFormatErrTips = ''
+                    let index = this.searchResultData.findIndex(i => i === this.checkedItem)
+                    if (index === -1) throw '请在“展示区”选择一项数据'
+                    // 这项目的对象存储器默认以索引为主键(从1开始)
+                    window.dbController.put(data, index + 1).then(_ => {
+                        alert('修改成功')
+                    })
+                }).catch(err => {
+                    this.editFormatErrTips = err
+                })
+            },
+            addObj() {
+                new Promise(resolve => {
+                    let resultObj
+                    try {
+                        resultObj = JSON.parse(this.addTextarea)
+                    } catch {
+                        throw '请输入 JSON 格式的数据'
+                    }
+                    if (!Array.isArray(resultObj)) {
+                        resolve(resultObj)
+                    } else {
+                        throw '请输入单个对象的数据'
+                    }
+                }).then(data => {
+                    this.addFormatErrTips = ''
+                    window.dbController.add(data).then(_ => {
+                        alert('添加成功')
+                    })
+                }).catch(err => {
+                    this.addFormatErrTips = err
+                })
+            }
+        }
+    })
+</script>
+
+</html>
