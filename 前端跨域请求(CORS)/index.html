@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html style="height:100%;width:100%;">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    article {
+      flex: 1;
+      height: 100%;
+      border-left: 1px solid blue;
+      display: flex;
+      flex-direction: column;
+    }
+
+    article button {
+      height: 30px;
+    }
+  </style>
+</head>
+
+<body style="height:100%;width:100%;padding:0;margin:0;display:flex;flex-direction:column;">
+  <header style="background:#333;color:#fff;padding:10px;">
+    <p>其实配置 CORS 很简单，只需要在服务器的响应头设置 <strong>"Access-Control-Allow-Origin"</strong>: "http://...." 即可，可以设置 "*" 允许所有域名的访问。
+    </p>
+    <p>但其中涉及 <strong>"简单请求"</strong> 与 <strong>非"简单请求"</strong> 的概念。</p>
+    <p>而两者的区别在于，非"简单请求"会在请求实际数据前发送一个 <strong>预检请求</strong>，该请求的方法是"OPTIONS"。对于请求数据这个操作并没有额外的差别。 </p>
+    <style>
+      strong {
+        color: yellow
+      }
+    </style>
+  </header>
+
+  <main style="flex:1;width:100%;display:flex;">
+
+    <article style="border-left:none;">
+      <button onclick="simpleRequest()">"简单请求"</button>
+      <div class="container" id="text-response-container" style="word-break:break-all;"></div>
+    </article>
+
+    <article>
+      <button onclick="notSimpleRequest()">非"简单请求"</button>
+      <div class="container" id="img-container"></div>
+    </article>
+
+    <article>
+      <button onclick="useFetch()">fetch</button>
+      <div class="container" id="fetch-response-container"></div>
+    </article>
+
+    <article>
+      <button onclick="useJsonp()">JSONP</button>
+      <div class="container" id="jsonp-response-container"></div>
+    </article>
+  </main>
+
+</body>
+<script>
+
+  /**
+   * "简单请求"
+   * 1. 下面代码只是简单的 Ajax 请求。
+   * 2. 只需要服务器设置了响应头 "Access-Control-Allow-Origin": "http://localhost:3000" 即可。
+   */
+  function simpleRequest() {
+    let xhr = new XMLHttpRequest()
+    xhr.open('get', 'http://localhost:4000/text');
+    xhr.addEventListener('load', e => {
+      let _target = e.target
+      let el = document.getElementById('text-response-container')
+      el.innerText = _target.responseText
+    })
+
+    // 设置 cookie
+    document.cookie = "username=lisi"
+    document.cookie = "password=654321"
+
+    xhr.withCredentials = true
+
+    xhr.send();
+  }
+
+
+  // 非"简单请求"
+  function notSimpleRequest() {
+    let xhr = new XMLHttpRequest()
+
+    /**
+     * 若请求方法不是默认允许的 HEAD、GET、POST 中的一种。
+     * 则服务端需要配置 "Access-Control-Allow-Methods" 指定所需的方法（多个用逗号分隔）。
+     * 与此同时，本次请求变为 非"简单请求" 。
+     */
+    xhr.open('POST', 'http://localhost:4000/png');
+
+    /**
+     * 若设置的请求头的 "Content-Type" 不是 "text/plain"、"multipart/form-data"、"application/x-www-form-urlencoded" 中的一种，
+     * 则服务器需要配置 "Access-Control-Allow-Headers" 添加 "Content-Type"。
+     * 与此同时，本次请求变为 非"简单请求" 。
+     */
+    xhr.setRequestHeader('Content-Type', 'image/png')
+
+    /**
+     * 启用跨域携带 cookie 。
+     * 同时，服务端需要配置响应头 "Access-Control-Allow-Credentials" 为 "true" 。
+     */
+    xhr.withCredentials = true
+
+    // 表示最大的请求时间（毫秒），超出则自动结束
+    xhr.timeout = 3000
+
+    // 指定解析响应数据的类型
+    xhr.responseType = 'blob'
+
+    let count = 0;  // 用于测试事件顺序
+    /** 
+     * 事件监听器
+     * readystatechange 当文档的 readyState 属性发生改变时触发。
+     * progress         检索的数据量发生了变化。
+     * load             传输完成，所有数据保存在 response 中。
+     * abort            当使用 .abort() 方法终止请求时触发。
+     * error            当请求发生错误时触发。
+     * loadend          无论是成功(load)、取消(abort)还是错误(error)都会触发。
+     * loadstart        开始接收响应数据时触发。
+     * timeout          当设定了 .timeout 值，超时时触发。
+     */
+    xhr.addEventListener('readystatechange', e => {
+      let _target = e.target
+      if (_target.readyState === XMLHttpRequest.DONE && _target.status === 200) {
+        let containerEl = document.getElementById('img-container'),
+          url = URL.createObjectURL(_target.response),
+          img = document.getElementById('my-image')
+        if (img) {
+          containerEl.removeChild(img)
+        }
+        img = document.createElement('img')
+        img.src = url
+        img.id = 'my-image'
+        img.style = 'width:100%;'
+        containerEl.appendChild(img);
+      }
+      console.log('readystatechange:', count++);  // 5 ; 6 ; 8
+    });
+    xhr.addEventListener('progress', e => {
+      console.log('progress:', count++);          // 7
+    });
+    xhr.addEventListener('loadstart', e => {
+      console.log('loadstart:', count++);         // 0
+    });
+    xhr.addEventListener('load', e => {
+      console.log('load:', count++);              // 9
+    });
+    xhr.addEventListener('loadend', e => {
+      console.log('loadend:', count++);           // 10
+    });
+
+    /**
+     * 获取 XMLHttpRequestUpload 对象。
+     * 当请求体中携带数据时，可以通过监听该对象的事件获取上传状态。
+     * 需要注意的是:
+     *  1. .send() 方法的参数必须为非空，否则不会触发此对象的监听器。
+     *  2. 为此对象添加监听器时，此请求会变为 非"简单请求" 。
+     * 可监听的事件类型基本与 XMLHttpRequest 一致，但没有 readystatechange 。
+     */
+    let upload = xhr.upload
+    upload.addEventListener('loadstart', e => {
+      console.log('upload-loadstart', count++);   // 1
+    });
+    upload.addEventListener('progress', e => {
+      console.log('upload-progress', count++);    // 2
+    });
+    upload.addEventListener('load', e => {
+      console.log('upload-load', count++);        // 3
+    });
+    upload.addEventListener('loadend', e => {
+      console.log('upload-loadend', count++);     // 4
+    });
+
+    /**
+     * 若设置了除了 Accept、Accept-Language、Content-Language、Last-Event-ID、Content-Type 的 HTTP 头，
+     * 则服务端需要配置 "Access-Control-Allow-Headers" 指定所需的属性（多个用逗号分隔）。
+     * 与此同时，本次请求变为 非"简单请求" 。
+     */
+    xhr.setRequestHeader('myHeader', 'myValue');
+
+    // 发送请求
+    xhr.send('aaaa');
+  }
+
+
+  /**
+   * fetch 请求 （IE 并不兼容）
+   * 关于fetch需要知道的几点：
+   *    1. 当收到响应时，即使状态码是404或500，Promise的状态都标记为resolve。
+   *    2. 默认不发送和不接收cookie。
+   *    3. 用法和XMLHttpRequest类似，可以理解为用Promise封装了XMLHttpRequest。
+   */
+  function useFetch() {
+    /**
+     * fetch() 方法可传入两个参数：
+     *    1. 目标URL，必要参数
+     *    2. 配置对象
+     * 对于跨域，fetch 与 XMLHttpRequest 需要注意的是一样的。
+     * fetch()的参数除了上面所说，还能传入一个 Request 实例对象，Request接收与fetch相同的参数。
+     * （Request 还能传入一个Request对象，达到拷贝的效果，这有时很有用，因为 response bodies 只能被使用一次）
+     */
+    fetch('http://localhost:4000/fetch', {
+      // 发起请求的方法，不多介绍
+      method: 'POST',
+      /**
+       * 携带cookie。有三个值：
+       *    1. include      表示必定携带cookie
+       *    2. same-origin  表示只在同源的情况下携带cookie
+       *    3. omit         表示必定不携带cookie
+       */
+      credentials: 'include',
+      /**
+       * 请求体。（GET、HEAD方法不能包含此属性）可以是以下任意类型：
+       *    1. Blob   
+       *    2. string
+       *    3. FormData         表单的数据类型，依赖于表单对象。
+       *    4. URLSearchParams  通过new可以创建该实例对象（用法自行查阅资料），就是URL的传参格式。
+       *    5. USVString        这不是可创建的类型。除了上面1~3，传入其他类型都会自动调用自身的.toString()方法，以字符串形式发送。
+       */
+      body: {},
+      // 请求头。通过 Headers() 构造函数可以创建自定义 headers 对象
+      headers: new Headers({
+        'Content-Type': 'text/plain'
+      }),
+      // 请求模式。可选值： no-cors, cors, *same-origin
+      mode: 'cors',
+      // 重定向的模式。可选值有： manual (手动处理重定向), *follow (自动重定向), error (重定向时抛出错误)
+      redirect: 'follow',
+      referrer: 'no-referrer', // *client, no-referrer
+      cache: 'no-cache' // *default, no-cache, reload, force-cache, only-if-cached
+    })
+      // resolve 时回传 Response 对象。
+      .then(res => {
+        /**
+         * 判断请求是否成功。
+         * response 对象中的常见属性有：
+         *  1. .status      响应状态码，如 200
+         *  2. .statusText  响应状态信息，与状态码相对应，如 200 对应 OK
+         *  3. .ok          当状态码处于 200~299 ，此属性的值为 true
+         */
+        if (res.ok) {
+          /**
+           * Response 与 Body 有共同的方法、属性。
+           * Body 的方法有 5 个：
+           *    1. arrayBuffer()
+           *    2. blob()
+           *    3. json()
+           *    4. text()
+           *    5. formData()
+           * 以上方法的作用都是把数据格式化成特定类型。
+           * 需要注意的是，一旦调用任意一个方法，body都会被标记为已读，不能再使用上述方法。
+           * 但可以通过 .bodyUsed 属性，判断body是否被标记为已读。通过 new Request() 能克隆出一个新的未读的 body 对象。
+           */
+          res.text().then(data => {
+            alert(data); // 'fetch 发起请求的响应文本。'
+          })
+          
+          return new Request(res).blob()
+        }
+      })
+      .catch(err => {
+        // 当出现如无网络的情况会触发，但服务器返回的，即使是404或500也不属于错误，Promise状态也是resolve。
+        console.error('请求错误！', err);
+      });
+  }
+
+
+
+  /**
+   * JSONP
+   * 后端配置：
+   *    1. 响应头的 "Content-Type" 为 "application/json" 
+   *    2. 响应内容为一段字符串： 函数名 + ( + JSON字符串 + )
+   * 前端配置：
+   *    1. 全局对象上定义 JSONP 的回调
+   *    2. 创建 script 标签，且 GET 参数中要指明回调函数的名字，然后把 script 标签添加到 HTML 文档中
+   */
+  function useJsonp() {
+    let containerEl = document.getElementById('jsonp-response-container'),
+      script = document.createElement('script')
+    script.src = 'http://localhost:4000/jsonp?callback=jsonpcb&name=zhangsan&password=123456'
+    containerEl.appendChild(script)
+  }
+  // JSONP回调函数
+  function jsonpcb(data) {
+    let containerEl = document.getElementById('jsonp-response-container')
+    containerEl.style = 'word-break:break-all;'
+    // {str: "string", num: 123, arr: [1,2,3], name: "zhangsan", password: "123456"}
+    containerEl.innerHTML = JSON.stringify(data);
+  }
+
+</script>
+
+</html>
