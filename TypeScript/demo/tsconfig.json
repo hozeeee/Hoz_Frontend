@@ -1,0 +1,95 @@
+{
+  // "files": ["src/index.ts"],               /* 被编译的多个文件 */
+  "include": ["src/*"],                    /* 被编译所包含的路径 */
+  // "exclude": [],                           /* 被排除编译的路径。 */
+
+  // "extends": "",                           /* 指定继承的配置文件 (一般指定上级目录的 tsconfig.json 文件) */
+
+  // "references": [{path: "..."}],           /* 指定依赖的路径 (表示编译时会连同指定目录的项目一同构建) */
+
+  "compilerOptions": {
+    // "composite": true,                     /* 当使用"工程引用"时需要开启 (子目录下需要配置"extends"和"references") */
+
+    // "incremental": true,                   /* 增量编译,默认false (表示下次编译会在这次编译的基础上修改,以提高编译速度,但会多出一个文件) */
+    // "tsBuildInfoFile": "./",               /* 设置增量编译文件的存储位置 (需要先开启"增量编译") */
+    // "diagnostics": true,                   /* 开启打印诊断信息,默认false */
+
+    "target": "es5",                          /* 目标语言的版本: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
+    "module": "commonjs",                     /* 生成代码的模块标准: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
+    // "outFile": "./app.js",                 /* 多个依赖合并成一个文件输出 (仅支持"module"为"amd"或"system"的情况) */
+    // "lib": [],                             /* 指定要包含在编译中的库文件 (当ts没有正确的语法提示,请手动添加) */
+
+    // "allowJs": true,                       /* 是否允许编译JS文件 (即 .js 或 .jsx ) */
+    // "checkJs": true,                       /* 是否允许在JS文件中显示报错信息 (通常与"allowJs"一起使用) */
+
+    // "declaration": true,                   /* 是否输出声明文件 (即".d.ts"文件) */
+    // "declarationDir": "./",                /* 输出声明文件的目录 (需要开启"declaration") */
+    // "emitDeclarationOnly": true,           /* 是否只生成声明文件 (需要开启"declaration") */
+    // "declarationMap": true,                /* 是否为声明文件生成 sourceMap (需要开启"declaration") */
+
+    // "sourceMap": true,                     /* 是否生成目标文件的 sourceMap (即".map"文件) */
+    // "inlineSourceMap": true,               /* 是否生成目标文件的 inline sourceMap (在JS文件内) */
+
+    "outDir": "./dist/",                        /* 指定输出目录 */
+    // "rootDir": "./",                       /* 指定输入目录 */
+
+    // "removeComments": true,                /* 输出文件不包含注释 */
+
+    // "noEmit": true,                        /* 不输出文件 (一般只用于文件中的类型检测,如跟Babel配合使用时,由Babel编译,ts只检测类型) */
+    // "noEmitOnError": true,                 /* 当发生错误时不输出文件 */
+
+    // TODO: helper 函数的作用？
+    // "noEmitHelpers": true,                 /* 不生成 helper 函数到代码中 */
+    // "importHelpers": true,                 /* 通过 "tslib" 引入 helper 函数 (被编译文件必须是模块) */
+
+    // "downlevelIteration": true,            /* 对"迭代器"使用"降级"的实现 (即使用兼容性更高的方法实现,当"target"为"es3"或"es5"时才有效) */
+
+    // "isolatedModules": true,               /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */
+    
+    // "jsx": "preserve",                     /* 针对 ".jsx" 文件的配置，有三个可选值： 'preserve'(默认), 'react-native'(), 'react'(编译出纯JS文件) */
+
+    /* 当设置 "strict" 属性为 true 时，下面的其他属性都默认设为 true */
+    "strict": true,                           /* 是否开启严格的类型检查 */
+    // "noImplicitAny": true,                 /* 不允许隐式的 any 类型 */
+    // "strictNullChecks": true,              /* 不允许把 null 、 undefined 赋值给其他类型变量 */
+    // "strictFunctionTypes": false,           /* 不允许函数参数的双向协变 */
+    // "strictBindCallApply": true,           /* 对 'bind' 、 'call' 、 'apply' 方法的参数进行类型检查 (即必须与源函数相同类型) */
+    // "strictPropertyInitialization": true,  /* 类的实例属性必须初始化 */
+    // "noImplicitThis": true,                /* 不允许 'this' 有隐式的 'any' 类型 (如非箭头函数的 this 可能指向其他对象) */
+    // "alwaysStrict": true,                  /* 在代码中注入 "use strict" */
+
+    /* 下面选项只会引起报错，但不会阻碍编译 */
+    // "noUnusedLocals": true,                /* 不允许只声明但未使用的变量 */
+    // "noUnusedParameters": true,            /* 不允许有定义但未使用的参数 */
+    // "noImplicitReturns": true,             /* 函数的每个分支都必须有返回值(或都没返回值) (分支就是 'switch' 或 'if/else' 创建的多个可能) */
+    // "noFallthroughCasesInSwitch": true,    /* 不允许 switch "语句贯穿" (意思是多个 'case' 执行同一处代码) */
+
+    // "typeRoots": [],                       /* 声明文件目录，默认 node_modules/@types */
+    // "types": [],                           /* 指定声明文件 */
+    
+    /* 模块相关的配置 */
+    // "allowSyntheticDefaultImports": true,  /* 允许从没有 "export default" 的模块中使用 "import *** from ***" */
+    "esModuleInterop": true,                  /* 允许使用 "import *** from ***" 导入 AMD 模块 (等于开启了"allowSyntheticDefaultImports") */
+    // "allowUmdGlobalAccess": true,          /* 允许在模块中访问 UMD 全局变量 */
+    // "moduleResolution": "node",            /* 模块解析策略 ('node' or 'classic') */
+    // "preserveSymlinks": true,              /* Do not resolve the real path of symlinks. */    
+    // "baseUrl": "./",                       /* 解析非相对路径的模块的根路径 (如"import mod from 'mod'"开始寻找的根路径) */
+    // "paths": {
+    //   "jquery": ["node_modules/jquery/dist/query.slim.min.js"]    /* 当我们使用"import jquery from 'jquery'"引入模块时，就不使用默认的路径，使用我们指定的这个路径下的文件 */
+    // },                                     /* 路径映射 (必须先开启 "baseUrl" 属性，且相对于 "baseUrl") */
+    // "rootDirs": ["src", "dist"],           /* 将多个目录"解构"放在同一个虚拟目录下，用于运行时 (如"dist"目录下已经有已编译的文件,"src"目录下的文件需要引用"dist"已编译文件,使用此属性,就可以让他们处于同一个虚拟目录下,不会影响运行时的路径引用) */
+
+
+    /* Source Map Options */
+    // "sourceRoot": "",                      /* Specify the location where debugger should locate TypeScript files instead of source locations. */
+    // "mapRoot": "",                         /* Specify the location where debugger should locate map files instead of generated locations. */
+    // "inlineSources": true,                 /* Emit the source alongside the sourcemaps within a single file; requires '--inlineSourceMap' or '--sourceMap' to be set. */
+
+    /* Experimental Options */
+    // "experimentalDecorators": true,        /* Enables experimental support for ES7 decorators. */
+    // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
+
+    // "listEmittedFiles": true,              /* 打印输出的文件路径 */
+    // "listFiles": true                      /* 打印编译所需的文件 (包括引用的声明文件) */
+  }
+}
