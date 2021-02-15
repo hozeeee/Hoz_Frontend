@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test login</title>
+</head>
+
+<body>
+  <label>账号：<input type="text" name="username" id="username"></label>
+  <label>密码：<input type="password" name="password" id="password"></label>
+  <button onclick="login()">登陆</button>
+</body>
+
+<script>
+  function login() {
+    let username = document.getElementById("username").value,
+      password = document.getElementById("password").value,
+      xhr = new XMLHttpRequest()
+    xhr.open('POST', '/api/login');
+    xhr.setRequestHeader('Content-Type', 'application/json')
+    xhr.addEventListener('readystatechange', e => {
+      let _target = e.target
+      if (_target.readyState === XMLHttpRequest.DONE && _target.status === 200) {
+        alert("登陆成功")
+        location.href =_target.responseURL
+      } else if (_target.status === 404) {
+        alert("登陆失败")
+      }
+    })
+    xhr.send(JSON.stringify({ username, password }))
+  }
+
+</script>
+
+</html>

@@ -1,0 +1,35 @@
+{
+  "name": "ssr_vue_demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "cross-env NODE_ENV=production node server.js",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "./node_modules/.bin/webpack --config build/webpack.client.config.js",
+    "build:server": "./node_modules/.bin/webpack --config build/webpack.server.config.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cross-env": "^7.0.0",
+    "express": "^4.17.1",
+    "vue": "^2.6.11"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "babel-loader": "^8.0.6",
+    "style-loader": "^3.4.2",
+    "css-loader": "^3.4.2",
+    "vue-loader": "^15.9.0",
+    "vue-server-renderer": "^2.6.11",
+    "vue-template-compiler": "^2.6.11",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-middleware": "^3.7.2",
+    "webpack-merge": "^4.2.2",
+    "webpack-node-externals": "^1.7.2"
+  }
+}
