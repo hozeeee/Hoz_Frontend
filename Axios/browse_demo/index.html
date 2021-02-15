@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <title>axios_demo</title>
+</head>
+
+<body>
+  <button onclick="testPost()">post</button>
+</body>
+
+<script>
+  // 配置默认值 (作用于所有axios发起的请求)
+  axios.defaults.headers.common['Authorization'] = 'AUTH_TOKEN';
+
+  // 添加拦截器
+  axios.interceptors.request.use(function (config) {
+    console.log(1)
+    return config;
+  }, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  });
+  axios.interceptors.request.use(function (config) {
+    console.log(2)
+    return config;
+  }, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  });
+
+  function testPost() {
+    axios.request({
+      // 请求地址 (除了"axios.request"方法,第一个参数都是url,此属性无效)
+      url: '/fetch',
+      // 请求方法 (当使用类似于"axios.post"的方法发起请求,此属性无效;此属性默认值是"get")
+      method: 'post',
+      // 请求的根路径 (当"url"带有协议及主机名等时,此属性无效)
+      baseURL: 'http://localhost:3001/testaxios/',
+      // 超时时间 (ms)
+      timeout: 1000, // 默认0，不设置超时
+      // 设置请求头字段
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      // 请求体的数据 (请求方法必须是'PUT','POST','PATCH'中的一种) ，值类型必须是以下一种：
+      // - 字符串, 普通对象, ArrayBuffer, ArrayBufferView, URLSearchParams
+      // - 浏览器特有： FormData, File, Blob
+      // - Node.js 特有： Stream, Buffer
+      data: {
+        firstName: 'foo'
+      },
+      // 对请求数据进行过滤 (请求方法必须是'PUT','POST','PATCH','DELETE'中的一种,返回的数据类型请参考"data"属性)
+      transformRequest: [function (data, headers) {
+        console.log('transformResponse:', data, headers)
+        data.lastName = 'baz'
+        return data;
+      }],
+      // 对响应数据进行过滤
+      transformResponse: [function (data) {
+        console.log('transformResponse:', data)
+        return data;
+      }],
+      // URL 参数  (必须是普通对象或URLSearchParams)
+      params: {
+        ID: 12345
+      },
+      // 对"params"参数进行序列化 (需要返回"?"后的字符串)
+      paramsSerializer: function (params) {
+        console.log('paramsSerializer:', params)
+        // return Qs.stringify(params, {
+        //     arrayFormat: 'brackets'
+        // })
+      },
+      // 表示是否应该使用凭证发出跨站点访问控制请求 (默认false)
+      withCredentials: false,
+      // 自定义响应数据 (必须返回promise,详细请看 https://github.com/axios/axios/blob/master/lib/adapters/README.md)
+      // adapter: function (config) { },
+      // 使用 Basic Auth 提供凭据  (写在请求头的"Authorization"属性中)
+      auth: {
+        username: 'janedoe',
+        password: 's00pers3cret'
+      },
+      // 响应的数据类型 (可选值：'arraybuffer','document','json'(默认),'text','stream','blob'(浏览器特有))
+      responseType: 'json', // default
+      // 响应的解码类型  (默认'utf8')
+      responseEncoding: 'utf8',
+      // 指定要用作 xsrf 令牌值的 cookie 的名称  (默认'XSRF-TOKEN')
+      xsrfCookieName: 'XSRF-TOKEN',
+      // 指定携带 xsrf 令牌值的请求头的名称  (默认'X-XSRF-TOKEN')
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      // 上传监听器 (可用于"上传文件进度条")
+      onUploadProgress: function (progressEvent) {},
+      // 下载监听器 (可用于"下载文件进度条")
+      onDownloadProgress: function (progressEvent) {},
+      // 定义 http 响应内容的最大大小  (单位bytes)
+      maxContentLength: 2000,
+      // 决定此请求是成功还是失败  (此方法需要返回一个布尔值)
+      validateStatus: function (status) {
+        return status >= 200 && status < 300; // default
+      },
+      // 设置 node.js 中最大重定向数 (若设为0,则不重定向) (仅用于node.js)
+      // maxRedirects: 5, // default
+
+      // 指定 UNIX Socket  ("socketPath"和"proxy"只能设置其中一个) (仅用于node.js)
+      // socketPath: null, // default
+
+      // 设置代理
+      // proxy: {
+      //     host: '127.0.0.1',
+      //     port: 9000,
+      //     auth: {
+      //         username: 'mikeymike',
+      //         password: 'rapunz3l'
+      //     }
+      // },
+
+      // 指定代理 (仅用于node.js)
+      // httpAgent: new http.Agent({ keepAlive: true }),
+      // httpsAgent: new https.Agent({ keepAlive: true }),
+
+      // 用于取消请求  (具体请查看下面的"取消请求")
+      // cancelToken: new CancelToken(function (cancel) {})
+    }).then(response => {
+      /**
+       * response 包含的属性
+       * @member {Object} data 响应数据
+       * @member {Number} status HTTP 状态码
+       * @member {String} statusText HTTP 状态 (与status相对应)
+       * @member {Object} headers 响应头
+       * @member {Object} config axios 请求的配置项
+       * @member {Object} request 在node.js中是 ClientRequest 实例对象；在浏览器中是 XMLHttpRequest 实例对象
+       */
+      console.log(response)
+    }).catch(error => {
+      /**
+       * error 包含的属性
+       * @member {Boolean} isAxiosError 是否axios发出的错误
+       * @member {Object} config axios 请求的配置项
+       * @member {Object} request 在node.js中是 ClientRequest 实例对象；在浏览器中是 XMLHttpRequest 实例对象
+       * @member {Object} response 响应对象 (与"then"参数的"response"相同,可能是undefined)
+       * @member {Function} toJSON 返回一个JSON格式化的 error 对象
+       */
+      console.log(error);
+    })
+  }
+</script>
+
+</html>
