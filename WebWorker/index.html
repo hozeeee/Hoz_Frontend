@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <header>WebWorker （用于执行复杂计算）</header>
+  <hr>
+  <main>
+    <!-- 用于测试UI是否被阻塞的时钟 -->
+    <section>
+      <p class="title">时钟：</p>
+      <p id="my_clock"></p>
+    </section>
+    <hr>
+
+    <!-- 功能按钮 -->
+    <section>
+      <p class="title">测试按钮：</p>
+      <p>
+        <button onclick="notUseWebWorker()">不使用webWorker，会阻塞UI线程 5秒</button>
+      </p>
+      <p>
+        <button onclick="useWebWorker()">使用webWorker，不阻塞UI线程，5秒后看控制台打印结果</button>
+      </p>
+      <p>
+        <button onclick="stopWebWorker()">按下上面按钮后5秒内，点击销毁该线程</button>
+      </p>
+    </section>
+  </main>
+</body>
+<script>
+  // 不使用 WebWorker
+  function notUseWebWorker() {
+    let timestamp = new Date().getTime()
+    while (new Date().getTime() - timestamp <= 5000) { }
+    console.log('阻塞UI结束')
+  }
+
+  // 使用 WebWorker
+  function useWebWorker() {
+    // 特性检测
+    if (!window.Worker) {
+      alert('该浏览器不支持 WebWorker!')
+      return
+    }
+    let worker = new Worker('/worker.js')
+    window._myWebWorker = worker
+    worker.onmessage = function (e) {
+      console.log(`WebWorker 计算结束，返回的结果为 ${e.data}`)
+    }
+    worker.postMessage(new Date().getTime())
+  }
+
+  // 终止 WebWorker 线程
+  function stopWebWorker() {
+    if (!window._myWebWorker) {
+      return
+    }
+    window._myWebWorker.terminate()
+    window._myWebWorker = null
+    console.log('WebWorker 线程已终止')
+  }
+
+
+  // 创建时钟，判单UI是否阻塞
+  let clockEl = document.getElementById('my_clock')
+  setInterval(() => {
+    let _time = new Date(),
+      hour = _time.getHours().toString().padStart(2, '0'),
+      minute = _time.getMinutes().toString().padStart(2, '0'),
+      second = _time.getSeconds().toString().padStart(2, '0'),
+      millis = _time.getMilliseconds().toString().padStart(3, '0')
+    clockEl.innerText = `${hour}:${minute}:${second}_${millis}`
+  }, 1);
+</script>
+
+</html>
