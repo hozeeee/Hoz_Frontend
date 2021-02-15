@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>flex 布局</title>
+</head>
+
+<body>
+  <header style="border-bottom:2px solid #aaa;margin-bottom:20px;">
+    <p>简介： flex 布局是 "二维"的布局方式，如横向或纵向。</p>
+    <p>要使用 flex 布局，首先决定布局的"容器"，然后就是里面的"元素"。</p>
+  </header>
+  <main class="flex_container">
+    <div class="flex_item" style="width:100px;height:100px;background-color:green;font-size:24px;">1</div>
+    <div class="flex_item" style="width:110px;height:110px;background-color:blue;font-size:22px;">2</div>
+    <div class="flex_item" style="width:120px;height:120px;background-color:green;font-size:20px;">3</div>
+    <div class="flex_item" style="width:130px;height:130px;background-color:blue;font-size:18px;">4</div>
+  </main>
+
+  <style>
+    /* flex容器 的样式 */
+    .flex_container {
+
+      /* 定义此 class 作为 flex 容器 */
+      display: flex;
+
+      /* 
+       * 定义布局的方向 (默认"row"从左到右)
+       * [这里涉及一个概念：主轴和垂直轴。此属性定义的方向就是主轴；垂直主轴的就是垂直轴]
+       * 可选值：
+       *  row            从左往右 (默认值)
+       *  row-reverse    从右往左
+       *  column         从上往下
+       *  column-reverse 从下往上
+       */
+      flex-direction: row;
+
+      /* 
+       * 换行的方式 (当一行放不下,就有两种可能:每个元素都挤压变小;或换行。默认不换行)
+       * [虽然 flex 布局是"二维"的，但也可能存在换行。如果理解成每行的首尾相接，其他它还是"二维"的]
+       * 可选值：
+       *  nowrap       不换行 (默认值)
+       *  wrap         换行
+       *  wrap-reverse 效果是"垂直轴反向"
+       */
+      flex-wrap: nowrap;
+
+      /* 上面两个个值的简写形式： <flex-direction> <flex-wrap> */
+      flex-flow: row nowrap;
+
+      /* 
+       * 定义 flex元素 在主轴方向上的对齐方式
+       * (注意,对于换行元素,此属性值不会影响排列的顺序,只会使得元素在某个方向靠在一起)
+       * 可选值：
+       *  flex-start    弹性元素靠主轴起始边排布 (默认值)
+       *  flex-end      与flex-start刚好相反
+       *  center        元素都堆在主轴中间排布 (常用)
+       *  space-between 主轴两边"不留白"，平均分布
+       *  space-around  主轴两边"留白"，留白的距离是元素之间的距离的一半
+       *  space-evenly  主轴两边"留白"，留白的距离是元素之间的距离相同
+       */
+      justify-content: flex-start;
+
+      /* 
+       * 定义主轴上每个 flex元素 在垂直轴方向上的对齐方式
+       * (和justify-content一样不会影响元素的顺序)
+       * 可选值： (下面的描述是针对默认的主轴水平，垂直方向的主轴自行理解)
+       *  flex-start  每行的元素都靠垂直轴起始的方向排布
+       *  flex-end    与flex-start刚好相反
+       *  center      每行元素都在行内居中排布 (常用)
+       *  baseline    以每行首个元素的基线对齐 (所谓基线,就是字符底下的基准线)
+       *  stretch     每个元素都拉伸填满行高 (默认值)
+       */
+      align-items: stretch;
+
+      /**
+       * 定义垂直轴上每条主轴的对齐方式
+       * (即此属性生效的两个条件：垂直轴的长度固定且有"冗余"；主轴有多条)
+       * 可选值：
+       *  flex-start    主轴靠主轴起始边排布
+       *  flex-end      与flex-start刚好相反
+       *  center        主轴都堆在垂直中间排布
+       *  space-between 垂直轴两边"不留白"，平均分布
+       *  space-around  垂直轴两边"留白"，留白的距离是元素之间的距离的一半
+       *  space-evenly  垂直轴两边"留白"，留白的距离是元素之间的距离相同
+       *  stretch       每条主轴都拉伸填满行高 (默认值)
+       */
+      align-content: stretch;
+
+    }
+
+
+    /**
+     * flex元素 的样式
+     * 值得说明的：
+     *  1. felx元素的外边距不折叠 (形成了BFC)
+     *  2. felx元素只要没有绝对定位，就是块级的 
+     *  
+     */
+    .flex_item {
+
+      /**
+       * 设置 flex 元素 的"增长因子"
+       * 当主轴有"剩余空间"时，flex元素会按"增长因子"占总数的比例，来获取特定的空间。
+       * 默认值为 0 ，表示不拉伸。
+       * 值必须是非负数，可以不是整数。
+       */
+      flex-grow: 0;
+      
+      /**
+       * 设置 flex元素 的"缩减因子"
+       * 与"增长因子"类似，当主轴空间不足，按比例缩减宽度
+       * 默认值为 1 ，表示每个元素缩减的值相同
+       * 设置为 0 时，表示不缩减
+       */
+      flex-shrink: 1;
+
+      /**
+       * 设置 flex元素 "增长"或"缩减"前的默认尺寸
+       * (注意，权威指南中不建议单独使用此属性，应在 flex 属性中一同设置)
+       * 默认值为 auto ，表示由内容自动撑开
+       * 可选值： 
+       *  content      可能存在兼容性问题，表示弹性基准等于弹性元素中内容的尺寸，即最长一行内容或最宽(或最高)那个媒体对象在主轴上的长度
+       *  <length>     带单位的长度值，如 100px
+       *  <percentage> 相对于弹性容器的比例值
+       */
+      flex-basis: auto;
+
+      /* 上面三个值的简写形式： <flex-grow> <flex-shrink> <flex-basis> */
+      flex: 0 1 auto;
+
+      /**
+       * 可选属性与 flex容器 的 align-items 基本一致，表现也一致，除了多了一个 auto 值。
+       * auto 就是默认值，表示使用容器的 align-items 设置。
+       * 此属性值的权重比 align-items 要高。
+       */
+       align-self: auto;
+
+      /**
+       * 设置 flex元素 的索引，用于改变元素的默认顺序
+       * 值需要是整数，可以是负数
+       */
+      order: 0;
+
+    }
+  </style>
+</body>
+
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>闪烁呼吸灯_边框_动画</title>
+</head>
+<style>
+  /** 圆直径   边框宽度均为 12%
+   * $circle-diameter: 100px;
+   * $circle-bg-color: rgba(58, 150, 225, 0.4);
+   */
+  .circle {
+    position: relative;
+    background: #c1bd57;
+    /* width: $circle-diameter;
+    height: $circle-diameter;
+    line-height: $circle-diameter; */
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+    border-radius: 100%;
+    text-align: center;
+    /* background-color: $circle-bg-color; */
+    background-color: rgba(58, 150, 225, 0.4);
+    margin: 10%;
+  }
+
+  .circle::after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: 100%;
+    opacity: 0.4;
+    animation: twinkling 2.1s infinite ease-in-out;
+  }
+
+  .circle::before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: -6%;
+    left: -6%;
+    z-index: -2;
+    width: 112%;
+    height: 112%;
+    background: inherit;
+    border-radius: 100%;
+    opacity: 0.2;
+    animation: twinkling 2.1s infinite ease-in-out;
+  }
+
+  /* 动画 */
+  @keyframes twinkling {
+    0% {
+      opacity: 0.2;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 0.5;
+      transform: scale(1.12);
+    }
+
+    100% {
+      opacity: 0.2;
+      transform: scale(1);
+    }
+  }
+</style>
+
+<body>
+  <div class="circle">
+    <span class="circle-content">这是内容</span>
+  </div>
+</body>
+
+</html>

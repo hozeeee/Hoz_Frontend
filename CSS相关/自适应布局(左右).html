@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>自适应布局(左右)</title>
+	<style>
+		html,
+		body {
+			padding: 0;
+			margin: 0;
+			height: 100%;
+			width: 100%;
+		}
+		.container {
+			width: 100%;
+			height: 100px;
+			background: #aaa;
+			margin-bottom: 20px;
+		}
+		.left,
+		.right {
+			height: 100%;
+			width: 100px;
+			background: pink;
+		}
+		.center {
+			height: 100%;
+			background: green;
+		}
+	</style>
+</head>
+<body>
+
+	<!-- 浮动布局 (display:float;) -->
+	<div class="container container1">
+		<div class="left">left</div>
+		<div class="center">浮动布局</div>
+		<div class="right">right</div>
+		<style>
+			.container1>div {
+				float: left;
+			}
+			.container1>.center {
+				width: calc(100% - 200px);
+			}
+		</style>
+	</div>
+
+	<!-- 绝对定位 (position:absolute;) -->
+	<div class="container container2">
+		<div class="left">left</div>
+		<div class="center">
+			绝对定位
+		</div>
+		<div class="right">right</div>
+		<style>
+			.container2 {
+				position: relative;
+			}
+			.container2>.center {
+				position: absolute;
+				top: 0;
+				left: 100px;
+				right: 100px;
+			}
+			.container2>.right {
+				position: absolute;
+				right: 0;
+				top: 0;
+			}
+		</style>
+	</div>
+
+	<!-- 弹性布局 (display:flex;) -->
+	<div class="container container3">
+		<div class="left">left</div>
+		<div class="center">
+			弹性布局
+		</div>
+		<div class="right">right</div>
+		<style>
+			.container3 {
+				display: flex;
+			}
+			.container3>.center {
+				flex: 1;
+			}
+		</style>
+	</div>
+
+	<!-- 表格布局 (display:flex;) -->
+	<div class="container container4">
+		<div class="left">left</div>
+		<div class="center">
+			表格布局
+		</div>
+		<div class="right">right</div>
+		<style>
+			.container4 {
+				display: table;
+			}
+			.container4>div {
+				display: table-cell;
+			}
+		</style>
+	</div>
+
+	<!-- 栅格布局 (display:flex;) -->
+	<div class="container container5">
+		<div class="left">left</div>
+		<div class="center">
+			栅格布局
+		</div>
+		<div class="right">right</div>
+		<style>
+			.container5 {
+				display: grid;
+				grid-template: 1fr / 100px 1fr 100px;
+			}
+		</style>
+	</div>
+
+</body>
+</html>

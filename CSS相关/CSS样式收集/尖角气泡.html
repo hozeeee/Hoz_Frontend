@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>尖角气泡</title>
+</head>
+<style>
+  .bubble {
+    color: #fff;
+    text-align: center;
+    line-height: 100px;
+    width: 200px;
+    height: 100px;
+    border-radius: 10px;
+    border: 2px solid #000;
+    background: green;
+    position: relative;
+  }
+
+  .bubble:before {
+    content: "";
+    /* 必须 否则不显示 */
+    width: 20%;
+    /* 尖角大小 宽 */
+    height: 20%;
+    /* 尖角大小 高 */
+    position: absolute;
+    left: 40%;
+    /* 50% - 宽度一半 */
+    top: 90%;
+    /* 100% - 宽度一半 */
+    background: inherit;
+    border-bottom: inherit;
+    border-right: inherit;
+    transform: rotate(45deg);
+  }
+</style>
+
+<body>
+  <div class="bubble">泡内文字</div>
+</body>
+
+</html>

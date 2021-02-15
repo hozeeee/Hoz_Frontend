@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>grid 布局</title>
+</head>
+
+<body>
+  <header style="border-bottom:2px solid #aaa;margin-bottom:20px;">
+    <p>使用 grid 布局需要理解几个概念：</p>
+    <p style="text-indent:10px;">栅格容器： 就是 grid 布局的容器元素。</p>
+    <p style="text-indent:10px;">栅格线： 划分栅格元素的线。栅格线可以是 0 宽度，无颜色。</p style="text-indent:10px;">
+    <p style="text-indent:10px;">栅格元素： 被栅格线划分出来的就是栅格元素，可以理解为 EXCEL 的单元格。</p style="text-indent:10px;">
+    <p style="text-indent:10px;">栅格区域： 多个栅格元素组成一个栅格区域，这就类似于 EXCEL 的合并单元格。</p style="text-indent:10px;">
+    <p>需要注意的：</p>
+    <p style="text-indent:10px;">栅格元素的外边距不与栅格容器的外边距折叠，即 <strong>栅格元素是BFC</strong> 。</p>
+    <p style="text-indent:10px;">栅格容器默认是块级元素，也可以通过 inline-grid 使栅格容器变为行内元素。</p>
+    <p style="text-indent:10px;"> </p>
+    <p style="text-indent:10px;"><strong>下面例子请配合源码服用：</strong></p>
+  </header>
+  <main>
+    <section class="grid_container container1">
+      <div class="grid_item" style="background-color:green;">1</div>
+      <div class="grid_item" style="background-color:pink;">2</div>
+      <div class="grid_item" style="background-color:green;">3</div>
+      <div class="grid_item" style="background-color:pink;">4</div>
+      <div class="grid_item" style="background-color:green;">5</div>
+      <div class="grid_item" style="background-color:pink;">6</div>
+    </section>
+    <hr>
+    <section class="grid_container container2">
+      <div class="grid_item item1" style="background-color:blue;">1</div>
+      <div class="grid_item" style="background-color:pink;">2</div>
+      <div class="grid_item" style="background-color:green;">3</div>
+      <div class="grid_item" style="background-color:pink;">4</div>
+      <div class="grid_item" style="background-color:green;">5</div>
+      <div class="grid_item" style="background-color:pink;">6</div>
+    </section>
+    <hr>
+    <div style="display:flex;">
+      <section class="grid_container container3">
+        <div class="grid_item" style="background-color:pink;">1</div>
+        <div class="grid_item item2" style="background-color:blue;">2</div>
+        <div class="grid_item" style="background-color:green;">3</div>
+        <div class="grid_item item4" style="background-color:yellow;">4</div>
+        <div class="grid_item" style="background-color:green;">5</div>
+        <div class="grid_item" style="background-color:pink;">6</div>
+        <div class="grid_item" style="background-color:green;">7</div>
+      </section>
+      <section class="grid_container container4">
+        <div class="grid_item" style="background-color:pink;">1</div>
+        <div class="grid_item item2" style="background-color:blue;">2</div>
+        <div class="grid_item" style="background-color:green;">3</div>
+        <div class="grid_item item4" style="background-color:yellow;">4</div>
+        <div class="grid_item" style="background-color:green;">5</div>
+        <div class="grid_item" style="background-color:pink;">6</div>
+        <div class="grid_item" style="background-color:green;">7</div>
+      </section>
+    </div>
+    <hr>
+    <section class="grid_container container5">
+      <div class="grid_item" style="background-color:green;">1</div>
+      <div class="grid_item" style="background-color:pink;">2</div>
+      <div class="grid_item" style="background-color:yellow;">3</div>
+      <div class="grid_item" style="background-color:blue;">4</div>
+      <div class="grid_item" style="background-color:red;">5</div>
+      <div class="grid_item" style="background-color:orange;">6</div>
+    </section>
+    <hr>
+    <section class="grid_container container6">
+      <div class="grid_item" style="background-color:green;">1</div>
+      <div class="grid_item" style="background-color:pink;">2</div>
+      <div class="grid_item" style="background-color:yellow;">3</div>
+      <div class="grid_item" style="background-color:blue;">4</div>
+      <div class="grid_item" style="background-color:red;">5</div>
+      <div class="grid_item item6" style="background-color:orange;">6</div>
+    </section>
+  </main>
+</body>
+
+<style>
+  .grid_container {
+    margin: 20px 0;
+    background-color: #aaa;
+
+    /* 定义此元素为 grid 容器 */
+    display: grid;
+  }
+
+  .grid_item {
+    font-size: 30px;
+
+    order: auto ;
+  }
+</style>
+
+<style>
+  .container1 {
+    /* 定义栏距 (栅格行或栅格列之间的间隔) */
+    grid-row-gap: 6px;
+    grid-column-gap: 10px;
+    /* 等效于 */
+    grid-gap: 6px 10px;
+
+    /**
+     * 定义列模板
+     * 栅格线的规则如下：
+     *   1. 默认是从左到右
+     *   2. 栅格线默认名字就是从 1 开始递增的数字
+     *   2. 栅格线名字写在"列与列之间"，用方括号括住，如 "grid-template-columns: [start] 200px [two] 50% [three] 100px [end];" 
+     *   3. 栅格线名字可以有多个，数量不限，"列栅格线"之间不能同名，但可以与"行栅格线"同名，如 "grid-template-columns: [one start first] 200px [center two] 100px [end];"
+     * 列宽的取值：
+     *   1. 普通定义长度的值，如 px、rem、em 等；或百分比值，如 50% 表示占父容器的一半
+     *   2. CSS的范围函数 minax(a,b) ，"a"、"b"可以是任意表示长度的值，如 minax(3em,70%) 表示最小长度是 3em ，最大长度是父容器的 70% (注意,最小值部分不能使用fr单位)
+     *   3. 特有的 fr 单位，用于表示占剩余空间的份数，如 每列都是 1fr ，表示每列都均分长度
+     *   4. 当 "fr" 和 "minmax()" 同时存在，先满足 "minmax()" 的最大值，然后再 "fr" 均分剩余空间
+     *   5. min-content 表示满足内容所需的最小空间，以文本为例，就是尽量换行，减少宽度，不超出底部即可
+     *   6. max-content 表示满足内容所需的最大空间，以文本为例，就是尽量让文本不换行
+     *   7. repeat()：此函数常用于多列宽度相同的情况下，如 "grid-template-columns: repeat(10, 1fr)" 表示创建10个等宽列
+     *   8. 还有其他的CSS函数，如 fit-content()，不详细介绍了...
+     * (下面例子表示有 3 列，宽度分别是：200px、占父容器的50%、100px；栅格线总共有 4 条，分别是 1 ~ 4 。默认从左到右)
+     */
+    grid-template-columns: 200px 50% 100px;
+
+    /* 与 grid-template-columns 基本一致，只是这个值用来定义行 */
+    grid-template-rows: repeat(2, 100px);
+  }
+</style>
+
+<style>
+  .container2 {
+    /* 是 grid-template-rows 和 grid-template-columns 的简写，格式是 "grid-template: <grid-template-rows> / <grid-template-columns>" */
+    grid-template: repeat(3, 100px) / repeat(3, 200px);
+
+    /**
+     * 定义栅格区域 
+     * 需要注意以下几点：
+     *  1. 同一行用双引号包裹，不同行用空格或回车隔开(下面的写法比较直观,推荐使用)。
+     *  2. 同名的表示同一个区域，但区域只能是"矩形"，否则无效。
+     *  3. 添加区域的同时，会为划分区域的4条栅格线添加上 "*-start" 和 "*-end" 的名字。
+     *  4. 光定义区域是没用的，需要在特定的栅格元素中指定区域，涉及的属性有 "grid-area" "grid-row" " grid-column" 等。
+     *  5. 用若干个 "." 可以表示某个栅格位置不参与栅格区域命名，如 "a ... b b" 。
+     *  6. grid-template 创建行列时，指定的栅格线名(*-start/*-end的形式)刚好组成矩形，会隐式创建"栅格区域"。
+     */
+    grid-template-areas:
+      "a a a"
+      "b c d"
+      "b e f"
+    ;
+  }
+
+  /* 为 栅格元素 指定 栅格区域 (下面列出多种等效写法) */
+  .container2>.item1 {
+    grid-area: a;
+    /* 等效于 (顺序依次是： row-start column-start row-end column-end) */
+    grid-area: a-start / a-start / a-end / a-end;
+    /* 等效于 */
+    grid-area: a / a / a / a;
+    /* 等效于 */
+    grid-row: a;
+    grid-column: a;
+    /* 等效于 */
+    grid-row: a-start / a-end;
+    grid-column: a-start / a-end;
+    /* 等效于 */
+    grid-row-start: a;
+    grid-row-end: a;
+    grid-column-start: a;
+    grid-column-end: a;
+    /* 等效于 */
+    grid-row-start: a-start;
+    grid-row-end: a-end;
+    grid-column-start: a-start;
+    grid-column-end: a-end;
+  }
+</style>
+
+<style>
+  .container3 {
+    grid-template: repeat(4, 100px) / repeat(4, 100px);
+
+    /**
+     * 定义栅格流
+     * 所谓栅格流，就是默认的栅格元素排列，默认是"行优先"，就是从左到右，然后到下一行的左，如此类推；而"列优先"就是从上到下，然后到次列的上。
+     * 取值： [ row(默认值,行优先) | column(列优先) ] || dense(使用紧凑排列)
+     * 其中，第一个值必须是 row 或 column ，第二个的 dense 是可选值。(其实第一个值是 row 时，可以忽略，只写 dense)
+     */
+    grid-auto-flow: column dense;
+  }
+
+  /* 对照组 */
+  .container4 {
+    grid-template: repeat(4, 100px) / repeat(4, 100px);
+    grid-auto-flow: column;
+  }
+
+  .container3>.item2,
+  .container4>.item2 {
+    /* "span" 语法，后面跟一个数字，表示占的行(或列)数 */
+    grid-area: span 2 / span 2;
+  }
+
+  .container3>.item4,
+  .container4>.item4 {
+    /* "span" 语法，后面跟一个数字，表示占的行(或列)数 */
+    grid-area: span 2 / span 1;
+  }
+</style>
+
+<style>
+  .container5 {
+    /* 这里只定义了一行 */
+    grid-template: repeat(1, 100px) / repeat(4, 100px);
+
+    /** 
+     * 定义自动增加的栅格线
+     * 所谓自增栅格线，就是说已定义的行(或列)不满足栅格元素的数量，自动增加栅格线以满足需求。默认只满足栅格元素的"最低要求"。
+     * 这里涉及两个属性： grid-auto-rows 和 grid-auto-columns ，使用哪个属性，取决于 grid-auto-flow 定义的排列方向。
+     */
+    grid-auto-rows: 90px;
+  }
+</style>
+
+<style>
+  .container6 {
+    grid-template: repeat(2, 100px) / repeat(3, 100px);
+    /**
+     * 栅格元素的对齐方式 (和flex的类似)
+     * "justify-*" 属性改变的是行内轴(横向)的对齐方式；"align-*" 属性改变的是块级轴(纵向)的对齐方式。
+     * "*-content" 针对的是整行(或列)中每个栅格元素的排布
+     *    可选值有: start(默认)  end  center  space-evenly  space-around  space-between
+     * "*-items" 针对的是栅格元素中的内容
+     *    可选值有: start  end  center  stretch(默认)  
+     */
+    justify-items: center;
+    justify-content: space-evenly;
+    align-items: center;
+    align-content: end;
+  }
+
+  .container6>.item6 {
+    /* 覆盖栅格容器的 justify-items */
+    justify-self: end;
+
+    /* 覆盖栅格容器的 align-items */
+    align-self: start;
+  }
+</style>
+
+</html>

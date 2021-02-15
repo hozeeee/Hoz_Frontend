@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D按钮</title>
+</head>
+
+<style>
+  .btn {
+    height: 30px;
+    width: 100px;
+    border-width: 4px;
+    border-style: solid;
+    border-color: #777 #333 #444 #777;
+    /* 重点代码 */
+    background: #555;
+    /* 重点代码 */
+    color: #ddd;
+  }
+
+  .btnActive {
+    border-color: #777 #aaa #aaa #777;
+    /* 重点代码 */
+    background: #999;
+    color: #111;
+  }
+</style>
+
+<body>
+  <button class="btn btnActive" id="myButton" onclick="handleClick()">点我</button>
+</body>
+
+<script>
+  var btnEl = document.getElementById("myButton");
+  function handleClick() {
+    btnEl.classList.toggle("btnActive");
+  }
+</script>
+
+</html>

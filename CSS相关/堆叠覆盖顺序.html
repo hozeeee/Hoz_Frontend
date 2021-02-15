@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>堆叠覆盖顺序</title>
+</head>
+
+<style>
+  .parent {
+    margin-left: 10px;
+    margin-top: 50px;
+    background: #B780C7;
+    border: 3px solid #000;
+    width: 200px;
+    height: 130px;
+    position: relative;
+  }
+
+  div {
+    width: 200px;
+    height: 30px;
+    padding-bottom: 30px;
+  }
+
+  .minus-z-index {
+    background: #8B7BC3;
+    position: relative;
+    top: -60px;
+    left: -20px;
+    z-index: -1;
+    margin-top: 10px;
+  }
+
+  .normal {
+    background: #4E70C4;
+    margin-left: 20px;
+    margin-top: -75px;
+  }
+
+  .float {
+    background: #4BBC8D;
+    float: left;
+    margin-left: 30px;
+    margin-top: -50px;
+  }
+
+  .inline-block {
+    background: #DFAE48;
+    display: inline-block;
+    margin-left: 40px;
+    margin-bottom: -50px;
+  }
+
+  .position-zero {
+    background: #9CC65F;
+    position: relative;
+    z-index: 0;
+    margin-left: 50px;
+    margin-top: 20px;
+    margin-bottom: -90px;
+  }
+
+  .text-one {
+    color: white;
+    font-weight: bold;
+    margin-left: 125px;
+    margin-top: -13px;
+  }
+
+  .text-two {
+    color: blue;
+    font-weight: bold;
+    margin-left: 125px;
+    margin-top: -30px;
+  }
+
+  .text-three {
+    color: green;
+    font-weight: bold;
+    margin-left: 10px;
+    margin-top: -30px;
+  }
+</style>
+
+<body>
+  <div class="parent">
+    <span>层叠上下文背景色及边框</span>
+    <div class="minus-z-index">
+      z-index: -1
+    </div>
+    <div class="position-zero">
+      z-index: 0
+    </div>
+    <div class="inline-block">
+      inline-block@
+    </div>
+    <div class="float">
+      float
+    </div>
+    <div class="normal">
+      正常流式布局
+    </div>
+    <!-- 注意的是，行元素是 后定义的 高于 前定义的 -->
+    <p class="text-one">@@12345@@</p>
+    <p class="text-two">&&12345&&</p>
+    <p class="text-three">$$12345$$</p>
+  </div>
+</body>
+
+</html>

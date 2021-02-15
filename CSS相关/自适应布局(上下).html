@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>自适应布局(上下)</title>
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      display: flex;
+    }
+    .container {
+      height: 100%;
+      width: 200px;
+      background: #aaa;
+      margin-right: 20px;
+    }
+    .element {
+      width: 100%;
+    }
+    .center {
+      background: green;
+    }
+    .top,
+    .bottom {
+      height: 100px;
+      background: pink;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 计算 (calc) -->
+  <div class="container container1">
+    <div class="element top">top</div>
+    <div class="element center">
+      属性计算： </br> height: calc(100% - 200px);
+    </div>
+    <div class="element bottom">bottom</div>
+    <style>
+      .container1>.center {
+        height: calc(100% - 200px);
+      }
+    </style>
+  </div>
+
+  <!-- 绝对定位 (position:absolute;) -->
+  <div class="container container2">
+    <div class="element top">top</div>
+    <div class="element center">
+      绝对定位：</br>
+      优点：简单、兼容性好</br>
+      缺点：自身及子元素均脱离文档流</br>
+    </div>
+    <div class="element bottom">bottom</div>
+    <style>
+      .container2 {
+        position: relative;
+      }
+      .container2>.bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+      }
+      .container2>.center {
+        position: absolute;
+        left: 0;
+        top: 100px;
+        bottom: 100px;
+        z-index: 1;
+      }
+    </style>
+  </div>
+
+  <!-- 弹性布局 (display:flex;) -->
+  <div class="container container3">
+    <div class="element top">top</div>
+    <div class="element center">
+      弹性布局：</br> display: flex;
+    </div>
+    <div class="element bottom">bottom</div>
+    <style>
+      .container3 {
+        display: flex;
+        flex-direction: column;
+      }
+      .container3>.center {
+        flex: 1;
+      }
+    </style>
+  </div>
+
+  <!-- 表格布局 (display:grid;) -->
+  <div class="container container4">
+    <div class="element top">top</div>
+    <div class="element center">
+      表格布局：</br> display: table;
+    </div>
+    <div class="element bottom">bottom</div>
+    <style>
+      .container4 {
+        display: table;
+      }
+      .container4>div {
+        display: table-row;
+      }
+    </style>
+  </div>
+
+  <!-- 栅格布局 (display:grid;) -->
+  <div class="container container5">
+    <div class="element top">top</div>
+    <div class="element center">
+      栅格布局：</br> display: grid;
+    </div>
+    <div class="element bottom">bottom</div>
+    <style>
+      .container5 {
+        display: grid;
+        grid-template: 100px 1fr 100px / 1fr;
+      }
+      .container5>.center {
+        height: auto;
+      }
+    </style>
+  </div>
+
+
+  <label for="test2">test</label>
+  <input type="text" name="test" id="test2">
+</body>
+</html>

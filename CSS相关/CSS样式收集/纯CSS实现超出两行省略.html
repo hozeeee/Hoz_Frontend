@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>纯CSS实现超出两行省略</title>
+</head>
+
+<style>
+  .box {
+    width: 300px;
+    border: 1px solid #aaa;
+    margin: 6px 0;
+  }
+
+  p {
+    margin: 0;
+  }
+</style>
+
+<body>
+  <div>
+    <p>方案一：（text-overflow）</p>
+    <p>优点：简单、兼容好。</p>
+    <p>缺点：只能<strong>单行</strong>。</p>
+    <div class="box box1">
+      <span>
+        this is the test text!this is the test text!this is the test text!this is the test text!this is the test
+        text!this is the test text!this is the test text!
+      </span>
+    </div>
+    <div class="box box1">
+      <span>
+        短文本
+      </span>
+    </div>
+    <style>
+      .box1 {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    </style>
+  </div>
+  <hr>
+  <!--------------------------------------------------------------------------------------------->
+  <div>
+    <p>方案二：（-webkit-line-clamp）</p>
+    <p>优点：简单。能设置任意行数。</p>
+    <p>缺点：兼容性不好，只能在<strong> webkit 内核 </strong>的浏览器使用。</p>
+    <div class="box box2">
+      <span>
+        this is the test text!this is the test text!this is the test text!this is the test text!this is the test
+        text!this is the test text!this is the test text!
+      </span>
+    </div>
+    <div class="box box2">
+      <span>
+        短文本
+      </span>
+    </div>
+    <style>
+      .box2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    </style>
+  </div>
+  <hr>
+  <!--------------------------------------------------------------------------------------------->
+  <div>
+    <p>方案三：（line-height、height、position、::after）</p>
+    <p>优点：兼容性好；高度固定,不会抖动。</p>
+    <p>缺点：<strong>"..."一直存在</strong>，只能在确定文本一定超出范围的情况下使用。</p>
+    <div class="box text_position">
+      this is the test text!this is the test text!this is the test text!this is the test text!this is the test text!this
+      is the test text!this is the test text!
+    </div>
+    <div class="box text_position">
+      短文本
+    </div>
+    <style>
+      .text_position {
+        position: relative;
+        line-height: 20px;
+        height: 40px;
+        overflow: hidden;
+      }
+
+      .text_position::after {
+        content: "...";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        /*省略号左方的渐变色*/
+        padding: 0 20px 1px 45px;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0), white 50%, white);
+        background: -moz-linear-gradient(to right, rgba(255, 255, 255, 0), white 50%, white);
+        background: -o-linear-gradient(to right, rgba(255, 255, 255, 0), white 50%, white);
+        background: -ms-linear-gradient(to right, rgba(255, 255, 255, 0), white 50%, white);
+        background: -webkit-gradient(linear, left top, right top, from(rgba(255, 255, 255, 0)), to(white), color-stop(50%, white));
+      }
+    </style>
+    <p><strong>原理解析</strong>：</p>
+    <p>使用伪类"::after"给文本末尾添加"..."，再利用决定定位使"..."永远在文本右下角。设置"height"是"line-height"的N倍，实现只显示N行。</p>
+  </div>
+  <hr>
+  <!--------------------------------------------------------------------------------------------->
+  <div>
+    <p>方案四：（float、position） <strong>[推荐]</strong></p>
+    <p>优点：兼容性好，可设置指定行数。</p>
+    <p>缺点：复杂。</p>
+    <div class="box wrap">
+      <span class="text">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos labore sit vel itaque delectus atque quos
+        magnam assumenda quod architecto perspiciatis animi.
+      </span>
+    </div>
+    <div class="box wrap">
+      <span class="text">
+        短文本
+      </span>
+    </div>
+    <style>
+      .wrap {
+        /* "height"与"line-height"要成倍数关系,倍数决定行数 */
+        height: 40px;
+        line-height: 20px;
+        overflow: hidden;
+      }
+
+      .text {
+        float: right;
+        /* "margin-left"要等于".wrap::before"的宽度 */
+        margin-left: -10px;
+        width: 100%;
+        word-break: break-all;
+      }
+
+      .wrap::before {
+        float: left;
+        content: '';
+        width: 10px;
+        height: 100%;
+      }
+
+      .wrap::after {
+        float: right;
+        content: "...";
+        /* 行高与".wrap"设置的一致即可 */
+        height: 20px;
+        line-height: 20px;
+        /* 设置三个省略号的宽度,大于字体文本宽度即可,数值随意。并使盒子不占位置 */
+        width: 30px;
+        margin-left: -30px;
+        /* 移动省略号位置 */
+        position: relative;
+        left: 100%;
+        bottom: 20px;
+        /* "padding"左右总和的值要小于等于".wrap::before"的宽度，但不能为0 */
+        padding-right: 1px;
+        padding-left: 9px;
+        /*省略号左方的渐变色*/
+        background: #fff;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0), white 20%, white);
+        background: -moz-linear-gradient(to right, rgba(255, 255, 255, 0), white 20%, white);
+        background: -o-linear-gradient(to right, rgba(255, 255, 255, 0), white 20%, white);
+        background: -ms-linear-gradient(to right, rgba(255, 255, 255, 0), white 20%, white);
+        background: -webkit-gradient(linear, left top, right top, from(rgba(255, 255, 255, 0)), to(white), color-stop(20%, white));
+      }
+    </style>
+    <p><strong>原理解析</strong>：</p>
+    <p>此方法在方法三的基础上改良，利用"float"的特性，原理如下：（4实际为3的relative）</p>
+    <img src="../图片/利用float实现超2行出省略号.png" style="width:600px;">
+    <p>当右浮动的文本超过左浮动的高度，"3"将会右浮动到"2"的左方。</p>
+  </div>
+  <hr>
+  <!--------------------------------------------------------------------------------------------->
+  <!-- TODO: 左右居中+超过2行省略    (T.T)之前的代码弄丢了.... -->
+
+  <!--------------------------------------------------------------------------------------------->
+  <!--------------------------------------------------------------------------------------------->
+  <!--------------------------------------------------------------------------------------------->
+
+</body>
+
+</html>

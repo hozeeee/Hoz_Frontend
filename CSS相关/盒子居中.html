@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>盒子居中</title>
+  <style>
+    article {
+      height: 200px;
+      width: 500px;
+      border: 1px solid #aaa;
+      margin: 10px;
+    }
+    .box {
+      background: #aaa;
+      height: 120px;
+      width: 400px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 弹性布局 -->
+  <article class="container1">
+    <div class="box"> display:flex </div>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      .container1 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </article>
+
+  <!-- 行内块级元素 -->
+  <article class="container2">
+    <div class="box">
+      <p> line-height + text-align + display:inline-block </p>
+    </div>
+    <style>
+      .container2 {
+        line-height: 200px;
+        text-align: center;
+      }
+      .container2>.box {
+        /*只对inline或table-cell起作用*/
+        vertical-align: middle;
+        display: inline-block;
+      }
+    </style>
+  </article>
+
+  <!-- 绝对定位 + 2D平移 -->
+  <article class="container3">
+    <div class="box">
+      <p> position:relative/absolute + transform:translate(...) </p>
+    </div>
+    <style>
+      .container3 {
+        position: relative;
+      }
+      .container3>.box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    </style>
+  </article>
+
+  <!-- 网格布局 -->
+  <article class="container4">
+    <div class="box"> display:grid </div>
+    <style>
+      .container4 {
+        display: grid;
+        grid-template: 1fr / 1fr;
+        justify-items: center;
+        align-items: center;
+      }
+    </style>
+  </article>
+
+  <!-- 自动外边距(仅限于左右) -->
+  <article class="container5">
+    <div class="box"> margin:auto (仅限于左右) </div>
+    <style>
+      .container5>.box {
+        margin: auto;
+      }
+    </style>
+  </article>
+
+</body>
+</html>
