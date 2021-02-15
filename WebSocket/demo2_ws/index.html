@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>WebSocket</title>
+</head>
+
+<body>
+  <p>连接 "ws://localhost:4321/" ：</p>
+  <button onclick="connect()">connect</button>
+  <hr>
+  <p>发送消息： (服务端的命令行看消息内容)</p>
+  <p>与此同时，服务端会定时每 2 秒发送一条消息过来 (控制台看效果)</p>
+  <button id="send_btn" onclick="send()" disabled="true">send</button>
+  <hr>
+  <p>可以主动关闭连接：</p>
+  <button onclick="_close()">close</button>
+  <hr>
+</body>
+<script>
+  let ws;
+  function connect() {
+    // 创建 websocket 连接
+    ws = new WebSocket("ws://localhost:4321/");
+    // 事件监听
+    ws.onmessage = e => {
+      console.log("接收到服务器的消息：", e.data);
+    }
+    ws.onopen = e => {
+      console.log("websocket 连接已成功建立...");
+    }
+
+    document.getElementById("send_btn").disabled = false;
+  }
+
+  // 发送消息
+  function send() {
+    ws.send(Math.random());
+  }
+
+  // 主动关闭 websocket 连接
+  function _close() {
+    ws ? ws.close() : null;
+  }
+</script>
+
+</html>
