@@ -1,0 +1,18 @@
+.app_container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  overflow: hidden;
+
+  .left_menu_container {
+    width: 300px;
+    height: 100%;
+  }
+
+  .right_page_container {
+    flex: 1;
+    height: 100%;
+    background-color: #eee;
+    overflow: auto;
+  }
+}

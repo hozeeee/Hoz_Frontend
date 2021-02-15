@@ -1,0 +1,61 @@
+body, html {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+#root, .App {
+  height: 100%;
+  width: 100%;
+}
+
+.App {
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+}
+
+.bg_color_ctrler {
+  height: 200px;
+  width: 300px;
+  font-size: 20px;
+  border-width: 6px;
+  border-color: yellow;
+}
+
+/* 背景色 */
+
+.bg_color_ctrler.green {
+  background-color: green;
+}
+
+.bg_color_ctrler.gray {
+  background-color: #aaa;
+}
+
+.bg_color_ctrler.red {
+  background-color: red;
+}
+
+/* 边框 */
+
+.bg_color_ctrler.solid {
+  border-style: solid;
+}
+
+.bg_color_ctrler.double {
+  border-style: double;
+}
+
+.bg_color_ctrler.inset {
+  border-style: inset;
+}
+
+.bg_color_ctrler.dashed {
+  border-style: dashed;
+}
+
+.bg_color_ctrler.groove {
+  border-style: groove;
+}
