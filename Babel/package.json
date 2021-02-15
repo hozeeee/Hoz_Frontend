@@ -1,0 +1,27 @@
+{
+  "name": "babel_demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "babel": "./node_modules/.bin/babel app.js --out-dir dist",
+    "babel-help": "./node_modules/.bin/babel --help"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@babel/cli": "^7.8.3",
+    "@babel/code-frame": "^7.8.3",
+    "@babel/core": "^7.8.3",
+    "@babel/plugin-transform-arrow-functions": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.8.3",
+    "@babel/preset-env": "^7.8.3"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.8.3",
+    "@babel/runtime-corejs3": "^7.8.3",
+    "core-js": "^3.6.4",
+    "regenerator-runtime": "^0.13.3"
+  }
+}
