@@ -370,3 +370,5 @@ $ git tag -d [tag name]
 
   1. 控制台输入命令 `git config --global credential.helper store`
   2. 执行同步操作(`git pull`或`git push`)，提示输入账号密码，输入后，会自动记录密码
+
+- 优化 git 提交的消息的 node 插件：[cz-cli](https://github.com/commitizen/cz-cli)。
